@@ -1,0 +1,52 @@
+name: kafka_spout_example
+workers: 2
+topology:
+
+    - spout:
+        name: data_source_kafka
+        type: kafka
+        options:
+            # The Kafka topic to stream from.
+            # Required.
+            topic: stom
+
+            # ZooKeeper connection string. Comma-separated list of ZooKeeper
+            # servers.
+            # Required.
+            zk_hosts: 10.10.20.6:2181
+
+            # Root path in ZooKeeper to store consumer offsets.
+            # Defaults to: /pyleus-kafka-offsets/<topology name>
+            zk_root: /pyleus-kafka-offsets/kafka_spout_example
+
+            # Kafka consumer ID.
+            # Defaults to: pyleus-<topology name>
+            consumer_id: pyleus-kafka_spout_example
+
+            # Whether the initial offset should be that specified by
+            # start_offset_time (true) or the head of the stream (false).
+            # Defaults to false.
+            from_start: false
+
+            # The offset time to start with if from_start is true.
+            # Defaults to the earliest offset time in the stream.
+            # start_offset_time: 1398971060
+
+            # support binary data like google protobuf
+            binary_data: true
+    - bolt:
+        name: squid_rate
+        module: kafka_spout_example.squid_rate
+        parallelism_hint: 3
+        groupings:
+          - shuffle_grouping: data_source_kafka 
+    - bolt:
+        name: log_results
+        module: kafka_spout_example.log_results
+        parallelism_hint: 3
+        groupings:
+          - shuffle_grouping: squid_rate
+          #- global_grouping: squid_rate
+          #- fields_grouping:
+            #component: squid_rate
+            #fields: [line]

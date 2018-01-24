@@ -4,8 +4,7 @@ import random
 from pyleus.storm import Spout
 
 log = logging.getLogger('counter')
-
-LINES = """
+LINES = """ 
 Lorem ipsum dolor sit amet, consectetur
 adipiscing elit. Curabitur pharetra ante eget
 nunc blandit vestibulum. Curabitur tempus mi
