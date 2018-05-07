@@ -8,18 +8,21 @@ import redis
 r = redis.Redis(host='127.0.0.1', port=6379, password='qssec.com', db=0)
 log = logging.getLogger('log_results')
 
+system_ips = ["2.2.2.2", "2.2.2.3"]
+
 
 class LogResultsBolt(SimpleBolt):
    
     def initialize(self):
         self.ips = defaultdict(int)
+        self.system_ips = defaultdict(int)
 
     def process_tuple(self, tup):
         log.info("v:{0}".format(tup.values)) 
         if tup.values:
             s = "{0}".format(tup.values[0])
             self.ips[s] += 1
-            log.info("ip,count:{0},{1}".format(s,self.ips[s]))
+            log.info("ip,count:{0},{1}".format(s, self.ips[s]))
             # 写到hdfs中
             # if not client.status("/hadoop/ttt.log",strict=False):
             #     with client.write("/hadoop/ttt.log") as f:
@@ -28,17 +31,16 @@ class LogResultsBolt(SimpleBolt):
             #     with client.write("/hadoop/ttt.log",append=True) as f:
             #         f.write("ip,count:{0},{1}".format(s,self.ips[s]))
             # 直接存储到redis中
-            r.set("attack_detection", {"attack_ip_num": len(self.ips),"attack_count_num": sum(self.ips.values())})
+            r.set("attack_detection", {"attack_ip_num": len(self.ips), "attack_count_num": sum(self.ips.values())})
+
+            if tup.values[1] in system_ips:
+                self.system_ips[str(tup.values[1])] += 1
+                r.set("realTimeMonitoring", {"attack_count_num": len(self.system_ips), "attack_ip_num": sum(self.system_ips.values())})
+
             r.set("{0}".format(s), "{0}".format(self.ips[s]))
 
-
-            #self.emit((s,), anchors=[tup])
-            #with open('/home/qsadmin/stom-kafka.txt','a') as f:
-            #    for i in data_list:
-            #        i = i+"}\n"    
-            #        f.write(i)
             
-if __name__=="__main__":
+if __name__ == "__main__":
     logging.basicConfig(
         level=logging.INFO,
         filename='/tmp/file_results.log',

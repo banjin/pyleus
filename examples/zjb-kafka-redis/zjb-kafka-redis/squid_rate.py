@@ -10,7 +10,8 @@ log = logging.getLogger('squid_rate')
 
 
 class LogSquidBolt(SimpleBolt):
-    OUTPUT_FIELDS = ["src_ip"] 
+    OUTPUT_FIELDS = ["src_ip", "dst_ip"]
+
     def process_tuple(self, tup):
         if tup.values:
             log.info("{0}".format(len(tup.values)))
@@ -21,19 +22,14 @@ class LogSquidBolt(SimpleBolt):
                 i = i+"}"
                 log.info(i)
                 line = json.loads(i)
-                #other_tup.append(line)
-                #log.info(other_tup)
-                #log.info(">>>>>>:{0}".format(line))
                 log.info("type:{0}".format(type(i)))
-                src_ip = line['ip']
+                src_ip = line['src_ip']
+                dst_ip = line['dst_ip']
                 log.info(src_ip) 
-           	self.emit((src_ip,))  
-            #with open('/home/qsadmin/stom-kafka.txt','a') as f:
-            #    for i in data_list:
-            #        i = i+"}\n"    
-            #        f.write(i)
-            
-if __name__=="__main__":
+           	self.emit((src_ip, dst_ip))
+
+
+if __name__ == "__main__":
     logging.basicConfig(
         level=logging.INFO,
         filename='/tmp/squid_results.log',
