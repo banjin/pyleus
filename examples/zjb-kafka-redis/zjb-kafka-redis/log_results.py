@@ -13,7 +13,7 @@ log = logging.getLogger('log_results')
 
 from utils import SYSTEM_TOP10 as realTimeMonitoring
 import MySQLdb
-db = MySQLdb.connect("localhost", "root", "123456.", "gab_event")
+db = MySQLdb.connect("localhost", "root", "qssec.com.", "gab_event")
 cursor = db.cursor()
 cursor.execute("SELECT ips.ip, system_name.`name` FROM ips INNER JOIN ips_system_name ON "
                "ips_system_name.ips_id = ips.id INNER JOIN system_name ON "
