@@ -8,4 +8,5 @@ from collections import defaultdict
 
 IPS = defaultdict(int)
 SYS_IPS = defaultdict(int)
+SYS_SRC_IPS = dict()
 SYSTEM_TOP10 = dict()

@@ -8,6 +8,7 @@ import redis
 import datetime
 from utils import IPS as ips
 from utils import SYS_IPS as sys_ips
+
 r = redis.Redis(host='127.0.0.1', port=6379, password='qssec.com', db=0)
 log = logging.getLogger('log_results')
 
@@ -54,7 +55,8 @@ class LogResultsBolt(SimpleBolt):
             # 重要系统攻击监测
             if tup.values[1] in self.system_ip_list:
                 sys_ips[str(tup.values[1])] += 1
-                realTimeMonitoring.update({str(tup.values[1]): sys_ips[str(tup.values[1])]})
+                # TODO 未想好怎么计算攻击IP个数
+                realTimeMonitoring.update({str(tup.values[1]): {"attack_ip_num": 10, "attack_count_num": sys_ips[str(tup.values[1])]}})
                 # r.set("realTimeMonitoring", {"attack_count_num": len(sys_ips), "attack_ip_num": sum(sys_ips.values())})
                 r.set("realTimeMonitoring", realTimeMonitoring)
             r.set("{0}".format(s), "{0}".format(ips[s]))
