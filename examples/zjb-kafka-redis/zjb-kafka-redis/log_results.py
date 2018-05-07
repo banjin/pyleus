@@ -12,9 +12,9 @@ log = logging.getLogger('log_results')
 
 system_ips = ["2.2.2.2", "2.2.2.3"]
 ips = defaultdict(int)
-
+log.info("ips", ips)
 sys_ips = defaultdict(int)
-
+log.info("sys_ips", sys_ips)
 
 class LogResultsBolt(SimpleBolt):
 
