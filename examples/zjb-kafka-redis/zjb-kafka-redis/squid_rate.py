@@ -10,7 +10,7 @@ log = logging.getLogger('squid_rate')
 import datetime
 
 class LogSquidBolt(SimpleBolt):
-    OUTPUT_FIELDS = ["src_ip", "dst_ip", "time"]
+    OUTPUT_FIELDS = ["src_ip", "dst_ip"]
 
     def process_tuple(self, tup):
 
@@ -26,10 +26,9 @@ class LogSquidBolt(SimpleBolt):
                 log.info("type:{0}".format(type(i)))
                 src_ip = line['src_ip']
                 dst_ip = line['dst_ip']
-                post_time = line['time']
                 log.info(src_ip)
 
-           	self.emit((src_ip, dst_ip, post_time))
+           	self.emit((src_ip, dst_ip))
 
 
 if __name__ == "__main__":
