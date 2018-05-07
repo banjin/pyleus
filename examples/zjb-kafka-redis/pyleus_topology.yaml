@@ -1,4 +1,4 @@
-name: kafka_spout_example
+name: zjb-kafka-redis
 workers: 2
 topology:
 
@@ -17,11 +17,11 @@ topology:
 
             # Root path in ZooKeeper to store consumer offsets.
             # Defaults to: /pyleus-kafka-offsets/<topology name>
-            zk_root: /pyleus-kafka-offsets/kafka_spout_example
+            zk_root: /pyleus-kafka-offsets/zjb-kafka-redis
 
             # Kafka consumer ID.
             # Defaults to: pyleus-<topology name>
-            consumer_id: pyleus-kafka_spout_example
+            consumer_id: pyleus-zjb-kafka-redis
 
             # Whether the initial offset should be that specified by
             # start_offset_time (true) or the head of the stream (false).
@@ -36,13 +36,13 @@ topology:
             binary_data: true
     - bolt:
         name: squid_rate
-        module: kafka_spout_example.squid_rate
+        module: zjb-kafka-redis.squid_rate
         parallelism_hint: 3
         groupings:
           - shuffle_grouping: data_source_kafka 
     - bolt:
         name: log_results
-        module: kafka_spout_example.log_results
+        module: zjb-kafka-redis.log_results
         parallelism_hint: 3
         groupings:
           - shuffle_grouping: squid_rate
