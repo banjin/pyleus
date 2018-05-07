@@ -15,7 +15,7 @@ class LogSquidBolt(SimpleBolt):
         if tup.values:
             log.info("{0}".format(len(tup.values)))
             s = "{0}".format(tup.values[0])
-            data_list=s.split("}")
+            data_list = s.split("}")
             data_list.pop()
             for i in data_list:
                 i = i+"}"

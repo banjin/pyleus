@@ -27,8 +27,8 @@ class LogResultsBolt(SimpleBolt):
             # else:
             #     with client.write("/hadoop/ttt.log",append=True) as f:
             #         f.write("ip,count:{0},{1}".format(s,self.ips[s]))
-
             # 直接存储到redis中
+            r.set("attack_detection", {"attack_ip_num": len(self.ips),"attack_count_num": sum(self.ips.values())})
             r.set("{0}".format(s), "{0}".format(self.ips[s]))
 
 
