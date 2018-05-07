@@ -5,7 +5,9 @@ import json
 import logging
 from hdfs.client import Client
 log = logging.getLogger('squid_rate')
-client = Client("http://localhost:50070")
+# client = Client("http://localhost:50070")
+client = Client("http://40.125.161.143:50070")
+
 
 class LogSquidBolt(SimpleBolt):
     OUTPUT_FIELDS = ["src_ip"] 
