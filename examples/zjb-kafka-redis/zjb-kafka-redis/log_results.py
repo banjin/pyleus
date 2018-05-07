@@ -6,21 +6,24 @@ from collections import namedtuple,defaultdict
 from hdfs.client import Client
 import redis
 import datetime
+from utils import IPS as ips
+from utils import SYS_IPS as sys_ips
 
 r = redis.Redis(host='127.0.0.1', port=6379, password='qssec.com', db=0)
 log = logging.getLogger('log_results')
 
 system_ips = ["2.2.2.2", "2.2.2.3"]
-ips = defaultdict(int)
+
 log.info("ips", ips)
-sys_ips = defaultdict(int)
 log.info("sys_ips", sys_ips)
+
 
 class LogResultsBolt(SimpleBolt):
 
     def initialize(self):
-        self.today = datetime.datetime.now().strftime("%Y-%m-%d")
-        self.yesterday = (datetime.date.today() + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        # self.today = datetime.datetime.now().strftime("%Y-%m-%d")
+        # self.yesterday = (datetime.date.today() + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        pass
 
     def process_tuple(self, tup):
         log.info("v:{0}".format(tup.values)) 
