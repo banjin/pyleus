@@ -26,7 +26,8 @@ class LogSquidBolt(SimpleBolt):
                 log.info("type:{0}".format(type(i)))
                 src_ip = line['src_ip']
                 dst_ip = line['dst_ip']
-                log.info(src_ip)
+                log.info("src_ip: {}".format(src_ip))
+                log.info("dst_ip: {}".format(dst_ip))
 
            	self.emit((src_ip, dst_ip))
 
