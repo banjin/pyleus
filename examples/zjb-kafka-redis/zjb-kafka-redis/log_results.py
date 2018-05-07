@@ -19,7 +19,6 @@ log.info("sys_ips", sys_ips)
 class LogResultsBolt(SimpleBolt):
 
     def initialize(self):
-
         self.today = datetime.datetime.now().strftime("%Y-%m-%d")
         self.yesterday = (datetime.date.today() + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
 
@@ -38,9 +37,8 @@ class LogResultsBolt(SimpleBolt):
             #         f.write("ip,count:{0},{1}".format(s,self.ips[s]))
             # 直接存储到redis中
             # 判断是否存在当天的数值
-            if not r.exists(self.today) and r.exists(self.yesterday):
-                r.set(self.today, {"attack_ip_num": len(ips), "attack_count_num": sum(ips.values())})
-                r.delete(self.yesterday)
+
+            r.set("attack_detection", {"attack_ip_num": len(ips), "attack_count_num": sum(ips.values())})
 
             if tup.values[1] in system_ips:
                 sys_ips[str(tup.values[1])] += 1
