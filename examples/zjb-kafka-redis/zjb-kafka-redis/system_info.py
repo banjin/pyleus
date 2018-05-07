@@ -9,24 +9,19 @@ import datetime
 from utils import IPS as ips
 from utils import SYS_IPS as sys_ips
 
+log = logging.getLogger('system_info')
+
 r = redis.Redis(host='127.0.0.1', port=6379, password='qssec.com', db=0)
-log = logging.getLogger('log_results')
-import MySQLdb
-db = MySQLdb.connect("localhost", "root", "123456.", "zjb_event")
-cursor = db.cursor()
 
 
 class LogResultsBolt(SimpleBolt):
 
-    OUTPUT_FIELDS = ["src_ip", "dst_ip", "system_info"]
+    OUTPUT_FIELDS = ["src_ip", "dst_ip", ""]
 
     def initialize(self):
         # self.today = datetime.datetime.now().strftime("%Y-%m-%d")
         # self.yesterday = (datetime.date.today() + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
-        cursor.execute("SELECT ips.ip, system_name.`name` FROM ips INNER JOIN ips_system_name ON "
-                       "ips_system_name.ips_id = ips.id INNER JOIN system_name ON "
-                       "ips_system_name.systemname_id = system_name.id;")
-        results = cursor.fetchall()
+        pass
 
     def process_tuple(self, tup):
 
@@ -45,7 +40,7 @@ class LogResultsBolt(SimpleBolt):
             # 直接存储到redis中
             # 判断是否存在当天的数值
 
-            self.emit(word, self.words[word])
+
 
 
 
