@@ -7,12 +7,13 @@ import logging
 log = logging.getLogger('squid_rate')
 # client = Client("http://localhost:50070")
 # client = Client("http://40.125.161.143:50070")
-
+import datetime
 
 class LogSquidBolt(SimpleBolt):
-    OUTPUT_FIELDS = ["src_ip", "dst_ip"]
+    OUTPUT_FIELDS = ["src_ip", "dst_ip", "time"]
 
     def process_tuple(self, tup):
+
         if tup.values:
             log.info("{0}".format(len(tup.values)))
             s = "{0}".format(tup.values[0])
@@ -25,8 +26,10 @@ class LogSquidBolt(SimpleBolt):
                 log.info("type:{0}".format(type(i)))
                 src_ip = line['src_ip']
                 dst_ip = line['dst_ip']
-                log.info(src_ip) 
-           	self.emit((src_ip, dst_ip))
+                post_time = line['time']
+                log.info(src_ip)
+
+           	self.emit((src_ip, dst_ip, post_time))
 
 
 if __name__ == "__main__":

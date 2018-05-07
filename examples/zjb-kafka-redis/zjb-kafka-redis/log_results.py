@@ -5,6 +5,8 @@ import logging
 from collections import namedtuple,defaultdict
 from hdfs.client import Client
 import redis
+import datetime
+
 r = redis.Redis(host='127.0.0.1', port=6379, password='qssec.com', db=0)
 log = logging.getLogger('log_results')
 
@@ -12,10 +14,12 @@ system_ips = ["2.2.2.2", "2.2.2.3"]
 
 
 class LogResultsBolt(SimpleBolt):
-   
+
     def initialize(self):
         self.ips = defaultdict(int)
         self.system_ips = defaultdict(int)
+        self.today = datetime.datetime.now().strftime("%Y-%m-%d")
+        self.yesterday = (datetime.date.today() + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
 
     def process_tuple(self, tup):
         log.info("v:{0}".format(tup.values)) 
@@ -31,7 +35,10 @@ class LogResultsBolt(SimpleBolt):
             #     with client.write("/hadoop/ttt.log",append=True) as f:
             #         f.write("ip,count:{0},{1}".format(s,self.ips[s]))
             # 直接存储到redis中
-            r.set("attack_detection", {"attack_ip_num": len(self.ips), "attack_count_num": sum(self.ips.values())})
+            # 判断是否存在当天的数值
+            if r.exists(self.today) and r.exists(self.yesterday):
+                r.set(self.today, {"attack_ip_num": len(self.ips), "attack_count_num": sum(self.ips.values())})
+                r.delete(self.yesterday)
 
             if tup.values[1] in system_ips:
                 self.system_ips[str(tup.values[1])] += 1
