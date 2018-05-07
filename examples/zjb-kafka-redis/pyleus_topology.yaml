@@ -8,7 +8,7 @@ topology:
         options:
             # The Kafka topic to stream from.
             # Required.
-            topic: stom
+            topic: slog
 
             # ZooKeeper connection string. Comma-separated list of ZooKeeper
             # servers.
