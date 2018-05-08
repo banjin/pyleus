@@ -45,6 +45,7 @@ class LogResultsBolt(SimpleBolt):
                 dst_ip_info = {}
 
             attack_count_num = dst_ip_info.get("attack_count_num")
+            log.info("attack_count_num, {}".format(attack_count_num))
             if not attack_count_num:
                 attack_count_num = 0
             attack_count_num += 1
@@ -52,7 +53,7 @@ class LogResultsBolt(SimpleBolt):
             log.info("attack_ip_num_set, {}".format(attack_ip_num_set))
 
             if not attack_ip_num_set:
-                attack_ip_num_set = []
+                attack_ip_num_set = list()
             print ">>>>>>>>>>>>>>>>>>>>>>>>>>>>"
             log.info("attack_ip_num_set.....",attack_ip_num_set)
             attack_ip_set = list(set(attack_ip_num_set).add(src_ip))
