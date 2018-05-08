@@ -48,8 +48,9 @@ class LogSquidBolt(SimpleBolt):
                     WAF_SYS_IPS[dst_ip].setdefault("ip_list", []).append(src_ip)
                     waf_system_data.update({str(dst_ip): {
                         "attack_ip_num": len(list(set(WAF_SYS_IPS[dst_ip]['ip_list']))),
-                        "attack_count_num": tt}})
-
+                        "attack_count_num": tt,
+                    }})
+                    waf_system_data.update({"attack_type": "waf"})
                     RDS.set("waf_systam_attack", waf_system_data)
 
 
