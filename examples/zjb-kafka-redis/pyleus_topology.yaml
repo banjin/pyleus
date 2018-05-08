@@ -72,7 +72,7 @@ topology:
         module: zjb-kafka-redis.waf-spout
         parallelism_hint: 3
         groupings:
-          - shuffle_grouping: data_source_kafka 
+          - shuffle_grouping: kafka-waf
     - bolt:
         name: log_results
         module: zjb-kafka-redis.log_results
