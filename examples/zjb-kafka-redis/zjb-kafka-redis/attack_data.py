@@ -15,9 +15,10 @@ log.info("sys_ips", sys_ips)
 system_ip_list = get_system_ips()
 
 attack_data = {}
-attack_ip_info={}
+attack_ip_info = {}
 r_attack_ip = {}
 type_info = {}
+
 
 class LogResultsBolt(SimpleBolt):
 
@@ -35,25 +36,45 @@ class LogResultsBolt(SimpleBolt):
 
             # 先不用计算白名单
             # 统计被攻击IP的次数
-            ips[dst_ip] += 1
-            attack_ips[dst_ip].add(src_ip)
-            log.info(ips[dst_ip])
+            attack_count_num = RDS.get("attack_system", {}).get(str(dst_ip), {}).get("attack_count_num", 0)
+            attack_count_num += 1
+            attack_ip_num_set = RDS.get("attack_system", {}).get(str(dst_ip), {}).get("attack_ip_num", [])
+            attack_ip_set = list(set(attack_ip_num_set).add(src_ip))
+
+            # attack_ips[dst_ip].add(src_ip)
+            # log.info(ips[dst_ip])
             # 每个被攻击ip的攻击次数
-            attack_data.update({str(dst_ip): {"attack_count_num": ips[dst_ip], "attack_ip_num": len(attack_ips[dst_ip])}})
+            attack_data.update({str(dst_ip): {"attack_count_num": attack_count_num, "attack_ip_num": attack_ip_set}})
             # 所有攻击ip
             # attack_ip_info.setdefault(dst_ip, []).append(src_ip)
 
-            # 攻击类型
-            att_type[attack_type] += 1
-            type_info.update({attack_type: att_type[attack_type]})
-            log.info("ip,count:{0},{1}".format(src_ip, ips[src_ip]))
-            # 地图上方攻击次数和攻击IP个数
-            RDS.set("attack_data", {"attack_ip_num": len(ips), "attack_count_num": sum(ips.values())})
+            attack_type_dict = RDS.get("attack_type", {})
+            attack_type_num = attack_type_dict.get(attack_type, 0)
 
+            attack_type_num += 1
+            attack_type_dict.update({attack_type:attack_type_num})
             # 攻击类型
-            RDS.set("attack_type", type_info)
-            # 重要系统
-            RDS.set("attack_system", attack_data)
+            RDS.set("attack_type", attack_type_dict)
+
+
+            # 可以不统计总的，接口中计算
+            # total_info = RDS.get("attack_data",{})
+            # total_attack_ip_num = total_info.get("attack_ip_num", 0)
+            # total_attack_count_num = total_info.get("attack_count_num", 0)
+
+            # RDS.set("attack_type",)
+            # # 攻击类型
+            # att_type[attack_type] += 1
+            # type_info.update({attack_type: att_type[attack_type]})
+            # log.info("ip,count:{0},{1}".format(src_ip, ips[src_ip]))
+            # # 地图上方攻击次数和攻击IP个数
+            # RDS.set("attack_data", {"attack_ip_num": len(ips), "attack_count_num": sum(ips.values())})
+            #
+            #
+            # # 重要系统
+            # RDS.set("attack_system", attack_data)
+
+
 
 
 
@@ -61,10 +82,6 @@ class LogResultsBolt(SimpleBolt):
             # if dst_ip in system_ip_list:
             #     sys_ips[dst_ip].setdefault("ip_list", []).append(src_ip)
             #     sys_ips[dst_ip].setdefault()
-
-
-
-
             #
             # if dst_ip in system_ip_list:
             #     tt = WAF_SYS_IPS[dst_ip].setdefault("count_num", 0)

@@ -54,3 +54,9 @@ def get_region_list():
 
     pass
 
+
+def get_info_from_redis():
+
+    """从redis中获取数据
+    """
+    pass
