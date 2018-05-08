@@ -37,12 +37,21 @@ class LogResultsBolt(SimpleBolt):
             # 先不用计算白名单
             # 统计被攻击IP的次数
 
-            dst_total_info = RDS.get("attack_system", {})
-            dst_ip_info = dst_total_info.get(str(dst_ip), {})
+            dst_total_info = RDS.get("attack_system")
+            if not dst_total_info:
+                dst_total_info = {}
+            dst_ip_info = dst_total_info.get(str(dst_ip))
+            if not dst_ip_info:
+                dst_ip_info = {}
 
-            attack_count_num = dst_ip_info.get("attack_count_num", 0)
+            attack_count_num = dst_ip_info.get("attack_count_num")
+            if not attack_count_num:
+                attack_count_num = 0
             attack_count_num += 1
-            attack_ip_num_set = dst_ip_info.get("attack_ip_num", [])
+            attack_ip_num_set = dst_ip_info.get("attack_ip_num")
+
+            if not attack_ip_num_set:
+                attack_ip_num_set = []
             attack_ip_set = list(set(attack_ip_num_set).add(src_ip))
 
             # attack_ips[dst_ip].add(src_ip)
@@ -52,13 +61,18 @@ class LogResultsBolt(SimpleBolt):
             # 所有攻击ip
             # attack_ip_info.setdefault(dst_ip, []).append(src_ip)
 
-            attack_type_dict = RDS.get("attack_type", {})
-            attack_type_num = attack_type_dict.get(attack_type, 0)
+            attack_type_dict = RDS.get("attack_type")
+            if not attack_type_dict:
+                attack_type_dict = {}
+            attack_type_num = attack_type_dict.get(attack_type)
+            if not attack_type_num:
+                attack_type_num = 0
 
             attack_type_num += 1
-            attack_type_dict.update({attack_type:attack_type_num})
+            attack_type_dict.update({attack_type: attack_type_num})
             # 攻击类型
             RDS.set("attack_type", attack_type_dict)
+            RDS.set("attack_system", dst_total_info)
 
 
             # 可以不统计总的，接口中计算
