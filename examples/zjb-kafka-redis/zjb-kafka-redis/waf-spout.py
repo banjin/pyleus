@@ -50,7 +50,7 @@ class LogSquidBolt(SimpleBolt):
                         "attack_ip_num": len(list(set(WAF_SYS_IPS[dst_ip]['ip_list']))),
                         "attack_count_num": tt}})
 
-                RDS.set("waf_systam_attack", waf_system_data)
+                    RDS.set("waf_systam_attack", waf_system_data)
 
 
             # RDS.set("waf_data", {"total_attack_num":"", "total_ip_num":""})
