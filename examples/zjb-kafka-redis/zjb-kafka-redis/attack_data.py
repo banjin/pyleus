@@ -36,15 +36,19 @@ class LogResultsBolt(SimpleBolt):
 
             # 先不用计算白名单
             # 统计被攻击IP的次数
-            attack_count_num = RDS.get("attack_system", {}).get(str(dst_ip), {}).get("attack_count_num", 0)
+
+            dst_total_info = RDS.get("attack_system", {})
+            dst_ip_info = dst_total_info.get(str(dst_ip), {})
+
+            attack_count_num = dst_ip_info.get("attack_count_num", 0)
             attack_count_num += 1
-            attack_ip_num_set = RDS.get("attack_system", {}).get(str(dst_ip), {}).get("attack_ip_num", [])
+            attack_ip_num_set = dst_ip_info.get("attack_ip_num", [])
             attack_ip_set = list(set(attack_ip_num_set).add(src_ip))
 
             # attack_ips[dst_ip].add(src_ip)
             # log.info(ips[dst_ip])
             # 每个被攻击ip的攻击次数
-            attack_data.update({str(dst_ip): {"attack_count_num": attack_count_num, "attack_ip_num": attack_ip_set}})
+            dst_total_info.update({str(dst_ip): {"attack_count_num": attack_count_num, "attack_ip_num": attack_ip_set}})
             # 所有攻击ip
             # attack_ip_info.setdefault(dst_ip, []).append(src_ip)
 
@@ -73,10 +77,6 @@ class LogResultsBolt(SimpleBolt):
             #
             # # 重要系统
             # RDS.set("attack_system", attack_data)
-
-
-
-
 
             # 统计攻击重要系统的信息
             # if dst_ip in system_ip_list:
