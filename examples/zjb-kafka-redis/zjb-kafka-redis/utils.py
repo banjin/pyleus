@@ -8,6 +8,7 @@ import redis
 import MySQLdb
 
 IPS = defaultdict(int)
+attack_ips = defaultdict(set)
 ATTACK_TYPE = defaultdict(int)
 SYS_IPS = defaultdict(dict)
 SYS_SRC_IPS = dict()

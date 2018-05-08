@@ -3,7 +3,7 @@
 from pyleus.storm import SimpleBolt
 import logging
 from collections import namedtuple
-from utils import IPS as ips, RDS,ATTACK_TYPE as att_type
+from utils import IPS as ips, RDS,ATTACK_TYPE as att_type,attack_ips
 from utils import SYS_IPS as sys_ips
 from utils import get_system_ips
 
@@ -36,9 +36,10 @@ class LogResultsBolt(SimpleBolt):
             # 先不用计算白名单
             # 统计被攻击IP的次数
             ips[dst_ip] += 1
+            attack_ips(dst_ip).add(src_ip)
             log.info(ips[dst_ip])
             # 每个被攻击ip的攻击次数
-            attack_data.update({str(dst_ip): {"attack_count_num": ips[dst_ip], "attack_ip_num":0}})
+            attack_data.update({str(dst_ip): {"attack_count_num": ips[dst_ip], "attack_ip_num":len(attack_ips(dst_ip))}})
             # 所有攻击ip
             # attack_ip_info.setdefault(dst_ip, []).append(src_ip)
 
