@@ -20,6 +20,9 @@ WAF_SYS_IPS = defaultdict(dict)
 
 
 def get_system_ips():
+    """"
+    获取重要系统的所有IP
+    """
 
     db = MySQLdb.connect("127.0.0.1", "root", "qssec.com", "gab_event")
     cursor = db.cursor()
@@ -30,3 +33,13 @@ def get_system_ips():
     results = cursor.fetchall()
 
     return [info[0] for info in results]
+
+
+def get_write_list():
+    """
+    获取白名单
+    :return:
+    """
+
+    pass
+

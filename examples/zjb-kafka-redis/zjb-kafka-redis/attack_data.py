@@ -1,16 +1,22 @@
 # coding:utf-8
+
 from pyleus.storm import SimpleBolt
-import os, re, time
 import logging
-from collections import namedtuple, defaultdict
-import redis
-from utils import IPS as ips
+from collections import namedtuple
+from utils import IPS as ips, RDS
 from utils import SYS_IPS as sys_ips
+from utils import get_system_ips
+
 log = logging.getLogger('log_results')
 
 log.info("ips", ips)
 log.info("sys_ips", sys_ips)
 
+system_ip_list = get_system_ips()
+
+attack_data = {}
+attack_ip_info={}
+r_attack_ip = {}
 
 class LogResultsBolt(SimpleBolt):
 
@@ -21,14 +27,32 @@ class LogResultsBolt(SimpleBolt):
         # 五元组
         log.info("v:{0}".format(tup.values))
         if tup.values:
-            s = "{0}".format(tup.values[0])
-            ips[s] += 1
-            log.info("ip,count:{0},{1}".format(s, ips[s]))
+            # src_ip
+            src_ip, dst_ip, post_time, attack_type, dst_port = tuple(tup.values)
+            # src_ip = "{0}".format(tup.values[0])
+            # dst_ip = "{0}".format(tup.values(1))
+            # 攻击总次数
+            # 先不用计算白名单
+            # 统计被攻击IP的次数
+            ips[dst_ip] += 1
+            # 每个被攻击ip的攻击次数
+            attack_data.update({str(dst_ip): ips[dst_ip]})
+            # 所有攻击ip
+            attack_ip_info.setdefault(dst_ip, []).append(src_ip)
 
-            # WAF_IPS[src_ip] += 1
-            # log.info("src_ip: {0},dst_ip: {1}".format(src_ip, dst_ip))
-            # # waf 攻击次数和攻击IP个数
-            # RDS.set("waf_attack_data", {"attack_ip_num": len(WAF_IPS), "attack_count_num": sum(WAF_IPS.values())})
+            # ips[src_ip] += 1
+            # log.info("ip,count:{0},{1}".format(src_ip, ips[src_ip]))
+            # 地图上方攻击次数和攻击IP个数
+            RDS.set("attack_data", {"attack_ip_num": attack_ip_info, "attack_count_num": attack_data})
+
+            # 统计攻击重要系统的信息
+            # if dst_ip in system_ip_list:
+            #     sys_ips[dst_ip].setdefault("ip_list", []).append(src_ip)
+            #     sys_ips[dst_ip].setdefault()
+
+
+
+
             #
             # if dst_ip in system_ip_list:
             #     tt = WAF_SYS_IPS[dst_ip].setdefault("count_num", 0)
@@ -40,8 +64,6 @@ class LogResultsBolt(SimpleBolt):
             #     }})
             #     waf_system_data.update({"attack_type": "waf"})
             #     RDS.set("waf_systam_attack", waf_system_data)
-
-            pass
 
 
 

@@ -10,8 +10,6 @@ from utils import WAF_IPS, WAF_SYS_IPS
 """
 安全防护数据
 """
-from utils import get_system_ips
-system_ip_list = get_system_ips()
 
 waf_system_data = {}
 
