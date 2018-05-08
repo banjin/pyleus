@@ -3,6 +3,7 @@
 from pyleus.storm import SimpleBolt
 import logging
 import json
+import ast
 from collections import namedtuple, deque
 from utils import IPS as ips, RDS,ATTACK_TYPE as att_type,attack_ips
 from utils import SYS_IPS as sys_ips
@@ -42,12 +43,13 @@ class LogResultsBolt(SimpleBolt):
             if not dst_total_info:
                 dst_total_info = {}
             else:
-                dst_total_info = json.loads(dst_total_info)
+
+                dst_total_info = ast.literal_eval(dst_total_info)
             dst_ip_info = dst_total_info.get(str(dst_ip))
             if not dst_ip_info:
                 dst_ip_info = {}
             else:
-                dst_ip_info = json.loads(dst_ip_info)
+                dst_ip_info = ast.literal_eval(dst_ip_info)
 
             attack_count_num = dst_ip_info.get("attack_count_num")
             log.info("attack_count_num, {}".format(attack_count_num))
@@ -76,7 +78,7 @@ class LogResultsBolt(SimpleBolt):
             if not attack_type_dict:
                 attack_type_dict = {}
             else:
-                attack_type_dict = json.loads(attack_type_dict)
+                attack_type_dict = ast.literal_eval(attack_type_dict)
             attack_type_num = attack_type_dict.get(attack_type)
             if not attack_type_num:
                 attack_type_num = 0
@@ -98,6 +100,7 @@ class LogResultsBolt(SimpleBolt):
             else:
                 realtime_data.popleft()
                 realtime_data.append({"src_ip":src_ip,"dst_ip":dst_ip, "attack_type": attack_type, "time": post_time})
+            realtime_data = list(realtime_data)
 
             RDS.set("realtime_data", realtime_data)
 
