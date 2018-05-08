@@ -3,7 +3,7 @@
 from pyleus.storm import SimpleBolt
 import logging
 from collections import namedtuple
-from utils import IPS as ips, RDS
+from utils import IPS as ips, RDS,ATTACK_TYPE as att_type
 from utils import SYS_IPS as sys_ips
 from utils import get_system_ips
 
@@ -31,19 +31,25 @@ class LogResultsBolt(SimpleBolt):
             src_ip, dst_ip, post_time, attack_type, dst_port = tuple(tup.values)
             # src_ip = "{0}".format(tup.values[0])
             # dst_ip = "{0}".format(tup.values(1))
-            # 攻击总次数
+
             # 先不用计算白名单
             # 统计被攻击IP的次数
             ips[dst_ip] += 1
             # 每个被攻击ip的攻击次数
-            attack_data.update({str(dst_ip): ips[dst_ip]})
+            attack_data.update({str(dst_ip): {"attack_count_num": ips[dst_ip], "attack_ip_num":0}})
             # 所有攻击ip
-            attack_ip_info.setdefault(dst_ip, []).append(src_ip)
+            # attack_ip_info.setdefault(dst_ip, []).append(src_ip)
 
-            # ips[src_ip] += 1
-            # log.info("ip,count:{0},{1}".format(src_ip, ips[src_ip]))
+            # 攻击类型
+            att_type[attack_type] += 1
+            ips[src_ip] += 1
+            log.info("ip,count:{0},{1}".format(src_ip, ips[src_ip]))
             # 地图上方攻击次数和攻击IP个数
-            RDS.set("attack_data", {"attack_ip_num": attack_ip_info, "attack_count_num": attack_data})
+            RDS.set("attack_data", {"attack_ip_num": len(ips), "attack_count_num": sum(ips.values())})
+            RDS.set("attack_type", att_type)
+            RDS.set("attack_system", attack_data)
+
+
 
             # 统计攻击重要系统的信息
             # if dst_ip in system_ip_list:

@@ -8,6 +8,7 @@ import redis
 import MySQLdb
 
 IPS = defaultdict(int)
+ATTACK_TYPE = defaultdict(int)
 SYS_IPS = defaultdict(dict)
 SYS_SRC_IPS = dict()
 SYSTEM_TOP10 = dict()
@@ -38,6 +39,15 @@ def get_system_ips():
 def get_write_list():
     """
     获取白名单
+    :return:
+    """
+
+    pass
+
+
+def get_region_list():
+    """
+    获取区域信息
     :return:
     """
 
