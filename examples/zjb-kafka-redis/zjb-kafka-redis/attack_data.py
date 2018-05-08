@@ -17,6 +17,7 @@ system_ip_list = get_system_ips()
 attack_data = {}
 attack_ip_info={}
 r_attack_ip = {}
+type_info = {}
 
 class LogResultsBolt(SimpleBolt):
 
@@ -35,6 +36,7 @@ class LogResultsBolt(SimpleBolt):
             # 先不用计算白名单
             # 统计被攻击IP的次数
             ips[dst_ip] += 1
+            log.info(ips[dst_ip])
             # 每个被攻击ip的攻击次数
             attack_data.update({str(dst_ip): {"attack_count_num": ips[dst_ip], "attack_ip_num":0}})
             # 所有攻击ip
@@ -42,11 +44,14 @@ class LogResultsBolt(SimpleBolt):
 
             # 攻击类型
             att_type[attack_type] += 1
-            ips[src_ip] += 1
+            type_info.update({attack_type: att_type[attack_type]})
             log.info("ip,count:{0},{1}".format(src_ip, ips[src_ip]))
             # 地图上方攻击次数和攻击IP个数
             RDS.set("attack_data", {"attack_ip_num": len(ips), "attack_count_num": sum(ips.values())})
-            RDS.set("attack_type", att_type)
+
+            # 攻击类型
+            RDS.set("attack_type", type_info)
+            # 重要系统
             RDS.set("attack_system", attack_data)
 
 
