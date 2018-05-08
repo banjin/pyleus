@@ -74,8 +74,8 @@ topology:
         groupings:
           - shuffle_grouping: kafka-waf
     - bolt:
-        name: log_results
-        module: zjb-kafka-redis.log_results
+        name: attack_data
+        module: zjb-kafka-redis.attack_data
         parallelism_hint: 3
         groupings:
           - shuffle_grouping: waf-spout

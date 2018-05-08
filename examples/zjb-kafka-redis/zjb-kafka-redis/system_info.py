@@ -41,10 +41,6 @@ class LogResultsBolt(SimpleBolt):
             # 判断是否存在当天的数值
 
 
-
-
-
-
 if __name__ == "__main__":
     logging.basicConfig(
         level=logging.INFO,

@@ -1,21 +1,12 @@
 # coding:utf-8
 
 from pyleus.storm import SimpleBolt
-import os,re,time
 import json
 import logging
-log = logging.getLogger('squid_rate')
-from utils import RDS
-from utils import WAF_IPS, WAF_SYS_IPS
+log = logging.getLogger('av_spout')
 """
-安全防护数据
+病毒类数据
 """
-from utils import get_system_ips
-system_ip_list = get_system_ips()
-
-waf_system_data = {}
-
-
 class LogSquidBolt(SimpleBolt):
     OUTPUT_FIELDS = ["src_ip", "dst_ip", "time", "attack_type", "port"]
 
@@ -34,16 +25,17 @@ class LogSquidBolt(SimpleBolt):
                 src_ip = line['src_ip']
                 dst_ip = line['dst_ip']
                 post_time = line['time']
-                attack_type = u"WAF"
+                attack_type = u"病毒"
                 port = line['dst_port']
-
            	self.emit((src_ip, dst_ip, post_time, attack_type, port))
 
 
 if __name__ == "__main__":
     logging.basicConfig(
         level=logging.INFO,
-        filename='/tmp/squid_waf.log',
+        filename='/tmp/av_spout.log',
         format="%(message)s",
         filemode='a',)
     LogSquidBolt().run()
+
+
