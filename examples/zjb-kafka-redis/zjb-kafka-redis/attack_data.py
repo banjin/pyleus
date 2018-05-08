@@ -2,7 +2,7 @@
 
 from pyleus.storm import SimpleBolt
 import logging
-from collections import namedtuple
+from collections import namedtuple, deque
 from utils import IPS as ips, RDS,ATTACK_TYPE as att_type,attack_ips
 from utils import SYS_IPS as sys_ips
 from utils import get_system_ips
@@ -56,7 +56,8 @@ class LogResultsBolt(SimpleBolt):
                 attack_ip_set = list(set(attack_ip_num_set).add(src_ip))
             else:
                 b = set()
-                attack_ip_set = list(b.add(src_ip))
+                c = b.add(src_ip)
+                attack_ip_set = list(c)
 
             # attack_ips[dst_ip].add(src_ip)
             # log.info(ips[dst_ip])
@@ -77,6 +78,18 @@ class LogResultsBolt(SimpleBolt):
             # 攻击类型
             RDS.set("attack_type", attack_type_dict)
             RDS.set("attack_system", dst_total_info)
+
+            # 实时数据
+            realtime_data = RDS.get("realtime_data")
+            if not realtime_data:
+                realtime_data = deque()
+            if len(realtime_data) < 10:
+                realtime_data.append({"src_ip":src_ip,"dst_ip":dst_ip, "attack_type": attack_type, "time": post_time})
+            else:
+                realtime_data.popleft()
+                realtime_data.append({"src_ip":src_ip,"dst_ip":dst_ip, "attack_type": attack_type, "time": post_time})
+
+            RDS.set("realtime_data", realtime_data)
 
 
             # 可以不统计总的，接口中计算
