@@ -55,7 +55,8 @@ class LogResultsBolt(SimpleBolt):
             if attack_ip_num_set:
                 attack_ip_set = list(set(attack_ip_num_set).add(src_ip))
             else:
-                attack_ip_set = list(set().add(src_ip))
+                b = set()
+                attack_ip_set = list(b.add(src_ip))
 
             # attack_ips[dst_ip].add(src_ip)
             # log.info(ips[dst_ip])
