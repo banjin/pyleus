@@ -2,8 +2,41 @@ name: zjb-kafka-redis
 workers: 2
 topology:
 
+#    - spout:
+#        name: kafka-slog
+#        type: kafka
+#        options:
+#            # The Kafka topic to stream from.
+#            # Required.
+#            topic: slog
+#
+#            # ZooKeeper connection string. Comma-separated list of ZooKeeper
+#            # servers.
+#            # Required.
+#            zk_hosts: 40.125.161.143:2181
+#
+#            # Root path in ZooKeeper to store consumer offsets.
+#            # Defaults to: /pyleus-kafka-offsets/<topology name>
+#            zk_root: /pyleus-kafka-offsets/zjb-kafka-redis
+#
+#            # Kafka consumer ID.
+#            # Defaults to: pyleus-<topology name>
+#            consumer_id: pyleus-zjb-kafka-redis
+#
+#            # Whether the initial offset should be that specified by
+#            # start_offset_time (true) or the head of the stream (false).
+#            # Defaults to false.
+#            from_start: false
+#
+#            # The offset time to start with if from_start is true.
+#            # Defaults to the earliest offset time in the stream.
+#            # start_offset_time: 1398971060
+#
+#            # support binary data like google protobuf
+#            binary_data: true
+
     - spout:
-        name: data_source_kafka
+        name: kafka-waf
         type: kafka
         options:
             # The Kafka topic to stream from.
@@ -17,11 +50,11 @@ topology:
 
             # Root path in ZooKeeper to store consumer offsets.
             # Defaults to: /pyleus-kafka-offsets/<topology name>
-            zk_root: /pyleus-kafka-offsets/zjb-kafka-redis
+            zk_root: /pyleus-kafka-offsets/waf-spout
 
             # Kafka consumer ID.
             # Defaults to: pyleus-<topology name>
-            consumer_id: pyleus-zjb-kafka-redis
+            consumer_id: pyleus-waf-spout
 
             # Whether the initial offset should be that specified by
             # start_offset_time (true) or the head of the stream (false).
@@ -35,8 +68,8 @@ topology:
             # support binary data like google protobuf
             binary_data: true
     - bolt:
-        name: squid_rate
-        module: zjb-kafka-redis.squid_rate
+        name: waf-spout
+        module: zjb-kafka-redis.waf-spout
         parallelism_hint: 3
         groupings:
           - shuffle_grouping: data_source_kafka 
