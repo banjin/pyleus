@@ -26,7 +26,7 @@ class LogSquidBolt(SimpleBolt):
                 src_ip = line['src_ip']
                 dst_ip = line['dst_ip']
                 post_time = line['time']
-                attack_type = u"大数据"
+                attack_type = u"bigdata"
                 port = line['dst_port']
            	self.emit((src_ip, dst_ip, post_time, attack_type, port))
 
