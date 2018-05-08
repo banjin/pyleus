@@ -78,7 +78,7 @@ topology:
         module: zjb-kafka-redis.log_results
         parallelism_hint: 3
         groupings:
-          - shuffle_grouping: squid_rate
+          - shuffle_grouping: waf-spout
           #- global_grouping: squid_rate
           #- fields_grouping:
             #component: squid_rate
