@@ -50,12 +50,12 @@ class LogResultsBolt(SimpleBolt):
             # 总攻击IP个数和攻击次数
             r.set("attack_detection", {"attack_ip_num": len(ips), "attack_count_num": sum(ips.values())})
             # 重要系统攻击监测
-            if tup.values[1] in self.system_ip_list:
-                sys_ips[str(tup.values[1])]["count_num"] += 1
-                sys_ips[str(tup.values[1])].setdefault("ip_list", []).append(tup.values[0])
-                realTimeMonitoring.update({str(tup.values[1]): {"attack_ip_num": len(sys_ips[str(tup.values[1])]['ip_list']), "attack_count_num": sys_ips[str(tup.values[1])]}})
-                # r.set("realTimeMonitoring", {"attack_count_num": len(sys_ips), "attack_ip_num": sum(sys_ips.values())})
-                r.set("realTimeMonitoring", realTimeMonitoring)
+            # if tup.values[1] in self.system_ip_list:
+            #     sys_ips[str(tup.values[1])]["count_num"] += 1
+            #     sys_ips[str(tup.values[1])].setdefault("ip_list", []).append(tup.values[0])
+            #     realTimeMonitoring.update({str(tup.values[1]): {"attack_ip_num": len(sys_ips[str(tup.values[1])]['ip_list']), "attack_count_num": sys_ips[str(tup.values[1])]}})
+            #     # r.set("realTimeMonitoring", {"attack_count_num": len(sys_ips), "attack_ip_num": sum(sys_ips.values())})
+            #     r.set("realTimeMonitoring", realTimeMonitoring)
             r.set("{0}".format(s), "{0}".format(ips[s]))
 
             
