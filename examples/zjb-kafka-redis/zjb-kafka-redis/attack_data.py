@@ -89,7 +89,7 @@ class LogResultsBolt(SimpleBolt):
                 # attack_ips[dst_ip].add(src_ip)
                 # log.info(ips[dst_ip])
                 # 每个被攻击ip的攻击次数
-                dst_total_info.update({str(dst_ip): {"attack_count_num": attack_count_num, "attack_ip_num": attack_ip_set}})
+                dst_total_info.update({str(dst_ip): {"attack_count_num": attack_count_num, "attack_ip_num": attack_ip_num_set}})
                 # 所有攻击ip
                 # attack_ip_info.setdefault(dst_ip, []).append(src_ip)
 
