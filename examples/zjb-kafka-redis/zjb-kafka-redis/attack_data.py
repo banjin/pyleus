@@ -114,7 +114,7 @@ class LogResultsBolt(SimpleBolt):
                     realtime_data = deque()
                 else:
                     realtime_data = deque(ast.literal_eval(realtime_data))
-                if len(realtime_data) < 10:
+                if len(realtime_data) < 20:
                     realtime_data.append({"src_ip":src_ip,"dst_ip":dst_ip, "attack_type": attack_type, "time": post_time})
                 else:
                     realtime_data.popleft()
