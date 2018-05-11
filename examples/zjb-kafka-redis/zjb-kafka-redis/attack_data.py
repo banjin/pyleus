@@ -122,6 +122,7 @@ class LogResultsBolt(SimpleBolt):
                 realtime_data = list(realtime_data)
 
                 RDS.set("realtime_data", realtime_data)
+                RDS.set("update_value", 1)
 
 
             # 可以不统计总的，接口中计算
