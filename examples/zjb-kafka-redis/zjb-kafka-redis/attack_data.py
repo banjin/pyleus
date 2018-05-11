@@ -53,7 +53,75 @@ class LogResultsBolt(SimpleBolt):
             elif (src_ip, dst_ip,dst_port) in total_info:
                 pass
             else:
+                # ============ 地图上方数值====== 攻击源 =========================
+                # 被攻击IP都是证件部
+                # {"src_ip":'', "11.11.11.11":""}
+                # 统计每个攻击IP攻击的次数
+                src_total_info = RDS.get("attack_total_info")
+                if not src_total_info:
+                    src_total_info = {}
+                else:
+                    src_total_info = ast.literal_eval(src_total_info)
+                src_ip_info = src_total_info.get(src_ip)
+                if not src_ip_info:
+                    src_total_info.update({src_ip: 1})
+                else:
+                    src_total_info.update({src_ip: int(src_ip_info)+1})
+                # total_num = src_total_info.get("total_num")
+                # if not total_num:
+                #     src_total_info.update({"total_num": 0})
+                # else:
+                #     src_total_info.update({"total_num": int(total_num)+1})
 
+                # ==============重要系统 ==================
+                # ***** 统计总数 ststem 攻击源 top5*********************
+                # {"system_attack_num":{"src_ip":5},"system_attacked_num":"{"dst_ip":{"attack_ip_list":[],"attack_ip_num":0}}}
+
+                # 攻击重要系统IP
+                if dst_ip in system_ip_list:
+
+                    system_info = RDS.get("system_info")
+                    if not system_info:
+                        system_info = {}
+                    else:
+                        system_info = ast.literal_eval(system_info)
+
+                    system_attack_num = system_info.get('system_attack_num')
+                    if not system_attack_num:
+                        system_attack_num = {}
+
+                    system_attack_ip_num = system_attack_num.get(src_ip)
+                    if not system_attack_ip_num:
+                        system_attack_num.update({src_ip: 1})
+                    else:
+                        system_attack_num.update({src_ip: int(system_attack_ip_num)+1})
+
+                # ************* system top10 *******************
+                    # {"dst_ip":{"attack_ip_list":[],"attack_ip_num":0}}
+                    system_attacked_num = system_info.get('system_attacked_num')
+                    if not system_attacked_num:
+                        system_attacked_num = {}
+
+                    dst_system_ip_info = system_attacked_num.get(dst_ip)
+                    if not dst_system_ip_info:
+                        dst_system_ip_info = {}
+                    src_system_ip_list = dst_system_ip_info.get('attack_ip_list')
+                    if not src_system_ip_list:
+                        src_system_ip_list = []
+                    set(src_system_ip_list).add(src_ip)
+                    system_src_ip_list = list(src_system_ip_list)
+
+                    attack_system_num = dst_system_ip_info.get("attack_ip_num")
+                    if not attack_system_num:
+                        attack_system_num = 1
+                    else:
+                        attack_system_num += 1
+
+                    system_attacked_num.update({dst_ip: {"attack_ip_list": system_src_ip_list, "attack_ip_num": attack_system_num}})
+
+                    RDS.set("system_info", {"system_attack_num": system_attack_num, "system_attacked_num": system_attacked_num})
+
+                """
                 # 统计被攻击IP的次数
 
                 dst_total_info = RDS.get("attack_system")
@@ -107,8 +175,23 @@ class LogResultsBolt(SimpleBolt):
                 # 攻击类型
                 RDS.set("attack_type", attack_type_dict)
                 RDS.set("attack_system", dst_total_info)
+                """
+                # ====================攻击检测 ===============================
+                attack_type_dict = RDS.get("attack_type")
+                if not attack_type_dict:
+                    attack_type_dict = {}
+                else:
+                    attack_type_dict = ast.literal_eval(attack_type_dict)
+                attack_type_num = attack_type_dict.get(attack_type)
+                if not attack_type_num:
+                    attack_type_num = 0
 
-                # 实时数据
+                attack_type_num += 1
+                attack_type_dict.update({attack_type: attack_type_num})
+                # 攻击类型
+                RDS.set("attack_type", attack_type_dict)
+
+                # =====================实时数据=======================================
                 realtime_data = RDS.get("realtime_data")
                 if not realtime_data:
                     realtime_data = deque()

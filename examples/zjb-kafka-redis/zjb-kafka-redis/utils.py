@@ -34,7 +34,7 @@ def get_system_ips():
 
     results = cursor.fetchall()
 
-    return [info[0] for info in results]
+    return (info[0] for info in results)
 
 
 def get_write_list():
