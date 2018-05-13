@@ -86,7 +86,7 @@ class LogResultsBolt(SimpleBolt):
                     else:
                         system_info = ast.literal_eval(system_info)
 
-                    system_attack_num = system_info.get('system_attack_num')
+                    system_attack_num = system_info.get("system_attack_info")
                     if not system_attack_num:
                         system_attack_num = {}
 
@@ -97,29 +97,20 @@ class LogResultsBolt(SimpleBolt):
                         system_attack_num.update({src_ip: int(system_attack_ip_num)+1})
 
                 # ************* system top10 *******************
-                    # {"dst_ip":{"attack_ip_list":[],"attack_ip_num":0}}
-                    system_attacked_num = system_info.get('system_attacked_num')
+                    # {"dst_ip":{"src_ip:10}}
+                    system_attacked_num = system_info.get('system_attacked_info')
                     if not system_attacked_num:
                         system_attacked_num = {}
 
                     dst_system_ip_info = system_attacked_num.get(dst_ip)
                     if not dst_system_ip_info:
                         dst_system_ip_info = {}
-                    src_system_ip_list = dst_system_ip_info.get('attack_ip_list')
-                    if not src_system_ip_list:
-                        src_system_ip_list = []
-                    set(src_system_ip_list).add(src_ip)
-                    system_src_ip_list = list(src_system_ip_list)
+                    src_system_ip_num = dst_system_ip_info.get(src_ip, 0)
+                    dst_system_ip_info.update({src_ip:src_system_ip_num+1})
 
-                    attack_system_num = dst_system_ip_info.get("attack_ip_num")
-                    if not attack_system_num:
-                        attack_system_num = 1
-                    else:
-                        attack_system_num += 1
+                    system_attacked_num.update({dst_ip: dst_system_ip_info})
 
-                    system_attacked_num.update({dst_ip: {"attack_ip_list": system_src_ip_list, "attack_ip_num": attack_system_num}})
-
-                    RDS.set("system_info", {"system_attack_num": system_attack_num, "system_attacked_num": system_attacked_num})
+                    RDS.set("system_info", {"system_attack_info": system_attack_num, "system_attacked_info": system_attacked_num})
 
                 """
                 # 统计被攻击IP的次数
@@ -198,50 +189,14 @@ class LogResultsBolt(SimpleBolt):
                 else:
                     realtime_data = deque(ast.literal_eval(realtime_data))
                 if len(realtime_data) < 20:
-                    realtime_data.append({"src_ip":src_ip,"dst_ip":dst_ip, "attack_type": attack_type, "time": post_time})
+                    realtime_data.append({"src_ip":src_ip,"dst_ip": dst_ip, "attack_type": attack_type, "time": post_time})
                 else:
                     realtime_data.popleft()
-                    realtime_data.append({"src_ip":src_ip,"dst_ip":dst_ip, "attack_type": attack_type, "time": post_time})
+                    realtime_data.append({"src_ip":src_ip,"dst_ip": dst_ip, "attack_type": attack_type, "time": post_time})
                 realtime_data = list(realtime_data)
 
                 RDS.set("realtime_data", realtime_data)
                 RDS.set("update_value", 1)
-
-
-            # 可以不统计总的，接口中计算
-            # total_info = RDS.get("attack_data",{})
-            # total_attack_ip_num = total_info.get("attack_ip_num", 0)
-            # total_attack_count_num = total_info.get("attack_count_num", 0)
-
-            # RDS.set("attack_type",)
-            # # 攻击类型
-            # att_type[attack_type] += 1
-            # type_info.update({attack_type: att_type[attack_type]})
-            # log.info("ip,count:{0},{1}".format(src_ip, ips[src_ip]))
-            # # 地图上方攻击次数和攻击IP个数
-            # RDS.set("attack_data", {"attack_ip_num": len(ips), "attack_count_num": sum(ips.values())})
-            #
-            #
-            # # 重要系统
-            # RDS.set("attack_system", attack_data)
-
-            # 统计攻击重要系统的信息
-            # if dst_ip in system_ip_list:
-            #     sys_ips[dst_ip].setdefault("ip_list", []).append(src_ip)
-            #     sys_ips[dst_ip].setdefault()
-            #
-            # if dst_ip in system_ip_list:
-            #     tt = WAF_SYS_IPS[dst_ip].setdefault("count_num", 0)
-            #     tt += 1
-            #     WAF_SYS_IPS[dst_ip].setdefault("ip_list", []).append(src_ip)
-            #     waf_system_data.update({str(dst_ip): {
-            #         "attack_ip_num": len(list(set(WAF_SYS_IPS[dst_ip]['ip_list']))),
-            #         "attack_count_num": tt,
-            #     }})
-            #     waf_system_data.update({"attack_type": "waf"})
-            #     RDS.set("waf_systam_attack", waf_system_data)
-
-
 
 
 if __name__ == "__main__":
