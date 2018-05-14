@@ -67,6 +67,7 @@ class LogResultsBolt(SimpleBolt):
                     src_total_info.update({src_ip: 1})
                 else:
                     src_total_info.update({src_ip: int(src_ip_info)+1})
+                RDS.set('attack_total_info', src_total_info)
                 # total_num = src_total_info.get("total_num")
                 # if not total_num:
                 #     src_total_info.update({"total_num": 0})
