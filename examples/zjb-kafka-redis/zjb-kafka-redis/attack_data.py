@@ -92,7 +92,9 @@ class LogResultsBolt(SimpleBolt):
                         system_attack_num = {}
 
                     system_attack_ip_num = system_attack_num.get(src_ip)
+                    log.info("system_attack_ip_num", system_attack_ip_num)
                     if not system_attack_ip_num:
+                        log.info("xxxxxxxxx")
                         system_attack_num.update({src_ip: 1})
                     else:
                         system_attack_num.update({src_ip: int(system_attack_ip_num)+1})
@@ -107,8 +109,10 @@ class LogResultsBolt(SimpleBolt):
                     if not dst_system_ip_info:
                         dst_system_ip_info = {}
                     src_system_ip_num = dst_system_ip_info.get(src_ip, 0)
-                    dst_system_ip_info.update({src_ip:src_system_ip_num+1})
+                    log.info("src_system_ip_num", src_system_ip_num)
 
+                    dst_system_ip_info.update({src_ip: src_system_ip_num+1})
+                    log.info("dst_system_ip_info", dst_system_ip_info)
                     system_attacked_num.update({dst_ip: dst_system_ip_info})
 
                     RDS.set("system_info", {"system_attack_info": system_attack_num, "system_attacked_info": system_attacked_num})
