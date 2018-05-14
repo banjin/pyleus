@@ -20,7 +20,7 @@ WAF_IPS = defaultdict(int)
 # waf 攻击重要系统的ip个数和次数
 WAF_SYS_IPS = defaultdict(dict)
 
-db = MySQLdb.connect("127.0.0.1", "root", "qssec.com", "gab_event")
+db = MySQLdb.connect("127.0.0.1", "root", "qssec.com", "zjb_event")
 cursor = db.cursor()
 
 
