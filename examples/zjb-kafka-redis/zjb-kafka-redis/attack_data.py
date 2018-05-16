@@ -27,7 +27,7 @@ only_attack_ip,only_attacked_port,only_attacked_ip,lost_port,lost_attacked_ip,lo
 class LogResultsBolt(SimpleBolt):
 
     def initialize(self):
-        pass
+        OUTPUT_FIELDS = ["src_ip"]
 
     def process_tuple(self, tup):
         # 五元组
@@ -202,6 +202,8 @@ class LogResultsBolt(SimpleBolt):
 
                 RDS.set("realtime_data", realtime_data)
                 RDS.set("update_value", 1)
+                self.emit((src_ip, ))
+
 
 
 if __name__ == "__main__":

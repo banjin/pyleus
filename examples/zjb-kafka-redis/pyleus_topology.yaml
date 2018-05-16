@@ -83,3 +83,9 @@ topology:
           #- fields_grouping:
             #component: squid_rate
             #fields: [line]
+    - bolt:
+        name: flume_bolt
+        module: zjb-kafka-redis.flume_bolt
+        parallelism_hint: 3
+        groupings:
+          - shuffle_grouping: attack_data
